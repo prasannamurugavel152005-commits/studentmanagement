@@ -10,6 +10,7 @@ if str(BASE_DIR) not in sys.path:
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
+app = None
 try:
     from django.core.wsgi import get_wsgi_application
     app = get_wsgi_application()
