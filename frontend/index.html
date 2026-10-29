@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <p class="eyebrow">Full-stack dashboard</p>
+      <h1>Student Management System</h1>
+      <p>Manage your students, courses, and records.</p>
+    </header>
+
+    <section class="card form-card">
+      <h2 id="formTitle">Add a student</h2>
+      <form id="studentForm">
+        <input id="name" name="name" type="text" placeholder="Student name" required maxlength="100">
+        <input id="email" name="email" type="email" placeholder="Email address" required>
+        <input id="course" name="course" type="text" placeholder="Course" required maxlength="100">
+        <input id="age" name="age" type="number" placeholder="Age" required min="1" max="150">
+        <div class="form-actions">
+          <button class="primary" id="submitButton" type="submit">Add Student</button>
+          <button class="secondary" id="cancelEdit" type="button" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="table-toolbar">
+        <h2>Students</h2>
+        <input id="search" type="search" placeholder="Search students..." aria-label="Search students">
+      </div>
+      <p id="status" role="status"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Course</th><th>Age</th><th>Actions</th></tr></thead>
+          <tbody id="studentTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
