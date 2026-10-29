@@ -1,2 +1,2 @@
 // Change this only for the production Vercel deployment.
-window.API_BASE_URL = "http://127.0.0.1:8000/api/students/";
+window.API_BASE_URL = "https://studentmanagement-backend.vercel.app/api/students/";
