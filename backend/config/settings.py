@@ -102,7 +102,19 @@ else:
     }
 
 cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', '')
-CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
+CORS_ALLOWED_ORIGINS = [
+    # Allowed in Local Development:
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    # Allowed in Production:
+    "https://studentmanagement-frontend.vercel.app",
+]
+if cors_origins:
+    for origin in cors_origins.split(','):
+        cleaned = origin.strip()
+        if cleaned and cleaned not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(cleaned)
+
 CORS_ALLOW_ALL_ORIGINS = not CORS_ALLOWED_ORIGINS
 
 REST_FRAMEWORK = {
