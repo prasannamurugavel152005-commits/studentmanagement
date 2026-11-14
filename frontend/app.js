@@ -6,6 +6,7 @@ const status = document.getElementById("status");
 const formTitle = document.getElementById("formTitle");
 const submitButton = document.getElementById("submitButton");
 const cancelEdit = document.getElementById("cancelEdit");
+const fields = ["register_number", "name", "email", "age", "gender", "department", "course", "phone"];
 let editingId = null;
 
 async function api(path = "", options = {}) {
@@ -23,10 +24,22 @@ async function loadStudents(query = "") {
     const students = await api(query ? `?search=${encodeURIComponent(query)}` : "");
     table.innerHTML = students.length ? students.map(student => `
       <tr>
-        <td>${student.id}</td><td>${escapeHtml(student.name)}</td><td>${escapeHtml(student.email)}</td>
-        <td>${escapeHtml(student.course)}</td><td>${student.age}</td>
-        <td><div class="actions"><button class="edit" onclick="editStudent(${student.id})">Edit</button><button class="delete" onclick="deleteStudent(${student.id})">Delete</button></div></td>
-      </tr>`).join("") : '<tr><td class="empty" colspan="6">No students found.</td></tr>';
+        <td>${student.id}</td>
+        <td>${escapeHtml(student.register_number || "")}</td>
+        <td>${escapeHtml(student.name)}</td>
+        <td>${escapeHtml(student.email)}</td>
+        <td>${student.age}</td>
+        <td>${escapeHtml(student.gender || "")}</td>
+        <td>${escapeHtml(student.department || "")}</td>
+        <td>${escapeHtml(student.course)}</td>
+        <td>${escapeHtml(student.phone || "")}</td>
+        <td>
+          <div class="actions">
+            <button class="edit" onclick="editStudent(${student.id})">Edit</button>
+            <button class="delete" onclick="deleteStudent(${student.id})">Delete</button>
+          </div>
+        </td>
+      </tr>`).join("") : '<tr><td class="empty" colspan="10">No students found.</td></tr>';
     status.textContent = `${students.length} student${students.length === 1 ? "" : "s"}`;
   } catch (error) { status.textContent = error.message; }
 }
@@ -41,6 +54,7 @@ form.addEventListener("submit", async event => {
   event.preventDefault();
   const student = Object.fromEntries(new FormData(form).entries());
   student.age = Number(student.age);
+
   try {
     submitButton.disabled = true;
     await api(editingId ? `${editingId}/` : "", {
@@ -58,7 +72,10 @@ async function editStudent(id) {
   try {
     const student = await api(`${id}/`);
     editingId = id;
-    for (const field of ["name", "email", "course", "age"]) document.getElementById(field).value = student[field];
+    for (const field of fields) {
+      const input = document.getElementById(field);
+      if (input) input.value = student[field] ?? "";
+    }
     formTitle.textContent = "Edit student";
     submitButton.textContent = "Save Changes";
     cancelEdit.hidden = false;
@@ -73,12 +90,17 @@ async function deleteStudent(id) {
 }
 
 function resetForm() {
-  form.reset(); editingId = null;
+  form.reset();
+  editingId = null;
   formTitle.textContent = "Add a student";
   submitButton.textContent = "Add Student";
   cancelEdit.hidden = true;
 }
+
 cancelEdit.addEventListener("click", resetForm);
 let searchTimer;
-search.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => loadStudents(search.value), 250); });
+search.addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadStudents(search.value), 250);
+});
 loadStudents();

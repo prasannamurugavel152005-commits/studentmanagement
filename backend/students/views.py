@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,7 +14,14 @@ def student_list(request):
             students = Student.objects.all()
             search = request.query_params.get('search', '').strip()
             if search:
-                students = Student.objects.filter(name__icontains=search) | Student.objects.filter(email__icontains=search) | Student.objects.filter(course__icontains=search)
+                students = students.filter(
+                    Q(name__icontains=search)
+                    | Q(email__icontains=search)
+                    | Q(course__icontains=search)
+                    | Q(department__icontains=search)
+                    | Q(register_number__icontains=search)
+                    | Q(phone__icontains=search)
+                )
             return Response(StudentSerializer(students.distinct(), many=True).data)
         except Exception as exc:
             return Response(

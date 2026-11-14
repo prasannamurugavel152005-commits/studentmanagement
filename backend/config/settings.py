@@ -23,6 +23,10 @@ else:
     if '.vercel.app' not in ALLOWED_HOSTS and '*' not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.extend(['.vercel.app', 'localhost', '127.0.0.1'])
 
+render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if render_host and render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_host)
+
 
 # Application definition
 
@@ -41,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -106,6 +111,8 @@ CORS_ALLOWED_ORIGINS = [
     # Allowed in Local Development:
     "http://127.0.0.1:5500",
     "http://localhost:5500",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
     # Allowed in Production:
     "https://studentmanagement-frontend.vercel.app",
 ]
@@ -115,7 +122,11 @@ if cors_origins:
         if cleaned and cleaned not in CORS_ALLOWED_ORIGINS:
             CORS_ALLOWED_ORIGINS.append(cleaned)
 
-CORS_ALLOW_ALL_ORIGINS = not CORS_ALLOWED_ORIGINS
+frontend_url = os.getenv('FRONTEND_URL')
+if frontend_url and frontend_url not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(frontend_url)
+
+CORS_ALLOW_ALL_ORIGINS = False if CORS_ALLOWED_ORIGINS else True
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
@@ -143,3 +154,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

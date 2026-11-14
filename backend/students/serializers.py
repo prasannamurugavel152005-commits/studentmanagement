@@ -4,6 +4,8 @@ from .models import Student
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    register_number = serializers.CharField(required=True, allow_blank=False, max_length=30)
+
     class Meta:
         model = Student
         fields = '__all__'

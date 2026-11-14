@@ -1,6 +1,9 @@
 venv/
+myenv/
 .env
+ca.pem
 __pycache__/
 *.py[cod]
 db.sqlite3
+staticfiles/
 .vercel
