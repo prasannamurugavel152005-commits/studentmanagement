@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/vercel_app.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/api$",
+      "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "^/api/(.*)$",
+      "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "^/$",
+      "dest": "frontend/index.html"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "frontend/$1"
+    }
+  ]
+}

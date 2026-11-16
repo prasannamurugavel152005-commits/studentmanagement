@@ -115,6 +115,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     # Allowed in Production:
     "https://studentmanagement-frontend.vercel.app",
+    "https://student-manage-frontend-gamma.vercel.app",
 ]
 if cors_origins:
     for origin in cors_origins.split(','):
