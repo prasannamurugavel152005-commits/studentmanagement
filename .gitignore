@@ -1,9 +1,14 @@
-frontend/.env*
-backend/.env
-backend/venv/
-backend/__pycache__/
-backend/**/__pycache__/
-backend/*.py[cod]
-backend/db.sqlite3
-.vercel
-**/.vercel
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Python virtual environments and generated files
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.log
+
+# Local databases
+*.sqlite3

@@ -10,14 +10,10 @@ class StudentApiTests(TestCase):
 
     def test_student_can_be_created_through_api(self):
         payload = {
-            'register_number': 'REG-1001',
             'name': 'Alice Johnson',
             'email': 'alice@example.com',
             'age': 20,
-            'gender': 'Female',
-            'department': 'Computer Science',
             'course': 'BSc Computing',
-            'phone': '5551234567',
         }
 
         response = self.client.post('/api/students/', payload, format='json')
@@ -26,20 +22,29 @@ class StudentApiTests(TestCase):
         self.assertEqual(Student.objects.count(), 1)
         self.assertEqual(Student.objects.get().name, 'Alice Johnson')
 
-    def test_student_search_matches_multiple_fields(self):
-        Student.objects.create(
-            register_number='REG-5001',
+    def test_student_can_be_updated_and_deleted_through_api(self):
+        student = Student.objects.create(
             name='Bob Lewis',
             email='bob@example.com',
             age=22,
-            gender='Male',
-            department='Engineering',
             course='Mechanical Engineering',
-            phone='5557654321',
         )
 
-        response = self.client.get('/api/students/?search=engineering')
+        response = self.client.put(
+            f'/api/students/{student.id}/',
+            {
+                'name': 'Robert Lewis',
+                'email': 'bob@example.com',
+                'age': 23,
+                'course': 'Engineering',
+            },
+            format='json',
+        )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], 'Bob Lewis')
+        self.assertEqual(response.data['name'], 'Robert Lewis')
+
+        response = self.client.delete(f'/api/students/{student.id}/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Student.objects.filter(id=student.id).exists())
