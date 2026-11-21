@@ -5,7 +5,8 @@ const LOCAL_API_URL = "http://127.0.0.1:8000/api/students/";
 
 // After you deploy the backend on Vercel, paste its address here.
 // Keep the "/api/students/" at the end.
-const PRODUCTION_API_URL = "https://student-mangement.vercel.app/api/students/";
+const PRODUCTION_API_URL =
+  "https://studentmanagement-backend.vercel.app/api/students/";
 
 // On your computer (Live Server) use the local backend.
 // On the internet (Vercel) use the production backend.
