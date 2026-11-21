@@ -1,60 +1,77 @@
-from django.db.models import Q
-from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from rest_framework import status
 from .models import Student
 from .serializers import StudentSerializer
 
 
 @api_view(['GET', 'POST'])
 def student_list(request):
+
     if request.method == 'GET':
-        try:
-            students = Student.objects.all()
-            search = request.query_params.get('search', '').strip()
-            if search:
-                students = students.filter(
-                    Q(name__icontains=search)
-                    | Q(email__icontains=search)
-                    | Q(course__icontains=search)
-                    | Q(department__icontains=search)
-                    | Q(register_number__icontains=search)
-                    | Q(phone__icontains=search)
-                )
-            return Response(StudentSerializer(students.distinct(), many=True).data)
-        except Exception as exc:
+        # Newest student first (same order as the screenshot)
+        students = Student.objects.all().order_by('-id')
+
+        serializer = StudentSerializer(
+            students,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    if request.method == 'POST':
+        serializer = StudentSerializer(
+            data=request.data
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
             return Response(
-                {
-                    "error": "Database error or tables not yet migrated.",
-                    "details": str(exc),
-                    "hint": "Visit /api/migrate/ to initialize database tables or verify your database environment variables."
-                },
-                status=status.HTTP_503_SERVICE_UNAVAILABLE
+                serializer.data,
+                status=status.HTTP_201_CREATED
             )
 
-    serializer = StudentSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def student_detail(request, pk):
+def student_detail(request, id):
+
     try:
-        student = Student.objects.get(pk=pk)
+        student = Student.objects.get(id=id)
+
     except Student.DoesNotExist:
-        return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "Student not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
     if request.method == 'GET':
-        return Response(StudentSerializer(student).data)
-    if request.method == 'PUT':
-        serializer = StudentSerializer(student, data=request.data, partial=True)
+        serializer = StudentSerializer(student)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = StudentSerializer(
+            student,
+            data=request.data
+        )
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    student.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    elif request.method == 'DELETE':
+        student.delete()
+
+        return Response(
+            {"message": "Student deleted successfully"}
+        )

@@ -1,70 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Management System</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main class="container">
-    <header>
-      <p class="eyebrow">Full-stack dashboard</p>
-      <h1>Student Management System</h1>
-      <p>Manage your students, courses, and records.</p>
-    </header>
 
-    <section class="card form-card">
-      <h2 id="formTitle">Add a student</h2>
-      <form id="studentForm">
-        <input id="register_number" name="register_number" type="text" placeholder="Register Number" required maxlength="30">
-        <input id="name" name="name" type="text" placeholder="Student Name" required maxlength="100">
-        <input id="email" name="email" type="email" placeholder="Email Address" required>
-        <input id="age" name="age" type="number" placeholder="Age" required min="1" max="150">
-        <select id="gender" name="gender" required>
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        <input id="department" name="department" type="text" placeholder="Department" required maxlength="100">
-        <input id="course" name="course" type="text" placeholder="Course" required maxlength="100">
-        <input id="phone" name="phone" type="tel" placeholder="Phone Number" required maxlength="15">
-        <div class="form-actions">
-          <button class="primary" id="submitButton" type="submit">Add Student</button>
-          <button class="secondary" id="cancelEdit" type="button" hidden>Cancel</button>
-        </div>
-      </form>
-    </section>
+    <div class="container">
 
-    <section class="card">
-      <div class="table-toolbar">
+        <h1>Student Management System</h1>
+
+        <!-- ADD / EDIT FORM -->
+        <form id="studentForm">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Student Name"
+                required
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Email"
+                required
+            >
+
+            <input
+                type="text"
+                id="course"
+                placeholder="Course"
+                required
+            >
+
+            <input
+                type="number"
+                id="age"
+                placeholder="Age"
+                min="1"
+                max="120"
+                required
+            >
+
+            <div class="form-buttons">
+                <button type="submit" id="submitBtn">
+                    Add Student
+                </button>
+
+                <button type="button" id="cancelBtn" class="btn-cancel" hidden>
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+
+        <hr>
+
+        <!-- SEARCH -->
+        <input
+            type="text"
+            id="search"
+            placeholder="Search by name, email or course..."
+        >
+
         <h2>Students</h2>
-        <input id="search" type="search" placeholder="Search students..." aria-label="Search students">
-      </div>
-      <p id="status" role="status"></p>
-      <div class="table-wrap">
+
+        <!-- Success / error messages appear here -->
+        <p id="message" class="message" hidden></p>
+
+        <!-- STUDENT TABLE -->
         <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Reg No.</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Age</th>
-              <th>Gender</th>
-              <th>Department</th>
-              <th>Course</th>
-              <th>Phone</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="studentTable"></tbody>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Age</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentTable">
+            </tbody>
         </table>
-      </div>
-    </section>
-  </main>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+
+    </div>
+
+    <script src="app.js"></script>
+
 </body>
 </html>
