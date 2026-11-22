@@ -6,6 +6,7 @@ All secrets and server addresses come from environment variables:
   * on Vercel       -> you type them in Project > Settings > Environment Variables
 """
 import os
+import tempfile
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -32,7 +33,7 @@ DEBUG = os.getenv("DEBUG", "False").strip().lower() == "true"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
-    if DEBUG:
+    if DEBUG or os.getenv("VERCEL"):
         SECRET_KEY = "dev-only-insecure-key-do-not-use-in-production"
     else:
         raise ImproperlyConfigured("SECRET_KEY is missing. Add it to backend/.env or to the Vercel environment variables.")
@@ -88,6 +89,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",  # VS Code Live Server
     "http://localhost:5500",
+    "https://studentmanagement-frontend-phi.vercel.app",
 ] + env_list("CORS_ALLOWED_ORIGINS")  # e.g. https://your-frontend.vercel.app
 
 
@@ -128,8 +130,14 @@ if DB_HOST:
         }
     }
 elif os.getenv("VERCEL"):
-    # Vercel cannot keep a SQLite file, so a missing database must be a loud error.
-    raise ImproperlyConfigured("DB_HOST is missing. Add DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT and DB_SSL_CA in the Vercel environment variables.")
+    # Vercel serverless functions cannot write to the packaged project directory.
+    # Use an ephemeral SQLite database for deployments that do not configure MySQL.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": str(Path(tempfile.gettempdir()) / "studentmanagement.sqlite3"),
+        }
+    }
 else:
     DATABASES = {
         "default": {
