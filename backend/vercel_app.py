@@ -14,6 +14,11 @@ app = None
 try:
     from django.core.wsgi import get_wsgi_application
     app = get_wsgi_application()
+
+    # Vercel deployments do not run manage.py migrate as a separate step.
+    if os.getenv("VERCEL"):
+        from django.core.management import call_command
+        call_command("migrate", interactive=False, verbosity=0)
 except Exception as exc:
     error_message = traceback.format_exc()
     print("FATAL ERROR INITIALIZING DJANGO ON VERCEL:\n", error_message, flush=True)
