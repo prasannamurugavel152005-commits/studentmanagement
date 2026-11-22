@@ -5,6 +5,15 @@ from .models import Student
 from .serializers import StudentSerializer
 
 
+@api_view(['GET'])
+def api_status(request):
+    return Response({
+        "status": "running",
+        "message": "Student Management API is available.",
+        "students_api": "/api/students/",
+    })
+
+
 @api_view(['GET', 'POST'])
 def student_list(request):
 
